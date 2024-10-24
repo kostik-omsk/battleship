@@ -1,14 +1,16 @@
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
+import { wsRoutes } from "./routes/wsRoutes";
 
 const PORT = 3000;
 const wss = new WebSocketServer({ port: PORT });
 
-wss.on("connection", (ws) => {
+wss.on("connection", (ws: WebSocket) => {
   console.log("New client connected");
   console.log(`- Max clients: ${wss.clients.size}`);
 
-  ws.on("message", (message) => {
-    console.log("received: ", message);
+  ws.on("message", (message: string) => {
+    console.log("Received: ", message);
+    wsRoutes(ws, message);
   });
 
   ws.on("error", (error) => {
@@ -20,6 +22,12 @@ wss.on("connection", (ws) => {
   });
 });
 
-console.log(`WebSocket server is running on ws://localhost:${PORT}`);
-console.log(`Server parameters:`);
-console.log(`- Port: ${PORT}`);
+wss.on("error", (error) => {
+  console.log("Error: %s", error);
+});
+
+wss.on("close", () => {
+  console.log("Server closed");
+});
+
+console.log(`WebSocket server is running on port ${PORT}`);
