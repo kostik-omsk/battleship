@@ -9,7 +9,6 @@ wss.on("connection", (ws: WebSocket) => {
   console.log(`- Max clients: ${wss.clients.size}`);
 
   ws.on("message", (message: string) => {
-    console.log("Received: ", message);
     wsRoutes(ws, message);
   });
 
