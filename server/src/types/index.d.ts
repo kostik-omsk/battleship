@@ -1,6 +1,4 @@
-export interface BaseMessage {
-  id: number | string;
-}
+import { WebSocket } from "ws";
 
 export enum MessageType {
   Reg = "reg",
@@ -17,23 +15,49 @@ export enum MessageType {
   Finish = "finish",
 }
 
+export interface Player {
+  index: number | string;
+  wins: number;
+}
+
+export interface BaseMessage {
+  type: MessageType;
+  data: string;
+  id: number | string;
+}
+
 // Сообщение о регистрации
-export interface RegLogMessage extends BaseMessage {
-  type: MessageType.Reg;
-  data: {
-    name: string;
-    password: string;
-  };
+export interface RegLogMessage {
+  name: string;
+  password: string;
 }
 
-export interface RegCreateMessage extends BaseMessage {
-  type: MessageType.Reg;
-  data: {
-    name: string;
-    index: number | string;
-    error: boolean;
-    errorText: string;
-  };
+export interface RegCreateMessage {
+  name: string;
+  index: number | string;
+  error: boolean;
+  errorText: string;
 }
 
-export type GameMessage = RegLogMessage;
+// // Создание новой комнаты
+export interface User {
+  password: string;
+}
+export interface RoomUser {
+  name: string;
+  index: number | string;
+}
+
+export interface UpdateRoomMessage {
+  roomId: number | string;
+  roomUsers: RoomUser[];
+}
+
+export interface UpdateWinners {
+  name: string;
+  wins: number;
+}
+
+export interface ExtendedWebSocket extends WebSocket {
+  player?: RoomUser;
+}
