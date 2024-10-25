@@ -1,64 +1,78 @@
-import { RegLogMessage } from "@/types";
-import { WebSocket } from "ws";
-
-interface Player {
-  password: string;
-  playerId: number | string;
-  wins: number;
-}
+import { ExtendedWebSocket, MessageType, Player, RegCreateMessage, RegLogMessage, User } from "@/types/index.d";
+import { safeParseJSON } from "@/utils/messageParser";
+import { updateRoom } from "@/controllers/roomController";
+import { updateWinners } from "@/controllers/gameController";
+import sendMessage from "@/utils/sendMessage";
 
 interface PlayersDB {
   [name: string]: Player;
 }
+interface usersDB {
+  [name: string]: User;
+}
 
 export const playersDB: PlayersDB = {};
+export const usersDB: usersDB = {};
 
-export const handleRegistration = (ws: WebSocket, { name, password }: RegLogMessage["data"]) => {
+export const handleRegistration = (ws: ExtendedWebSocket, data: string) => {
+  const parsedData = safeParseJSON<RegLogMessage>(data);
+
+  if (!parsedData) {
+    console.log("Received invalid data");
+    return;
+  }
+
+  const { name, password } = parsedData;
+
   if (name && password) {
+    const existingUser = usersDB[name];
     const existingPlayer = playersDB[name];
 
-    if (existingPlayer && existingPlayer.password === password) {
-      const response = {
-        type: "reg",
-        data: JSON.stringify({
-          name,
-          index: existingPlayer.playerId,
-          error: false,
-          errorText: "",
-        }),
-        id: 0,
+    if (existingPlayer && existingUser && existingUser.password === password) {
+      const player = {
+        name,
+        index: existingPlayer.index,
       };
 
-      ws.send(JSON.stringify(response));
+      ws.player = player;
+
+      const response = {
+        ...player,
+        error: false,
+        errorText: "",
+      };
+      sendMessage<RegCreateMessage>(ws, MessageType.Reg, response);
+      updateRoom(ws);
+      updateWinners(ws);
     } else if (existingPlayer) {
       const response = {
-        type: "reg",
-        data: JSON.stringify({
-          name,
-          index: "",
-          error: true,
-          errorText: "Player already registered",
-        }),
-        id: 0,
+        name,
+        index: "",
+        error: true,
+        errorText: "Player already registered",
       };
-
-      ws.send(JSON.stringify(response));
+      sendMessage<RegCreateMessage>(ws, MessageType.Reg, response);
     } else {
       const playerId = Object.keys(playersDB).length + 1;
-      playersDB[name] = { password, playerId, wins: 0 };
+      playersDB[name] = { index: playerId, wins: 0 };
+      usersDB[name] = { password };
 
-      const response = {
-        type: "reg",
-        data: JSON.stringify({
-          name,
-          index: playerId,
-          error: false,
-          errorText: "",
-        }),
-        id: 0,
+      const player = {
+        name,
+        index: playerId,
       };
 
-      ws.send(JSON.stringify(response));
+      ws.player = player;
+
+      const response = {
+        ...player,
+        error: false,
+        errorText: "",
+      };
+
+      sendMessage<RegCreateMessage>(ws, MessageType.Reg, response);
+      updateRoom(ws);
+      updateWinners(ws);
     }
   }
 };
