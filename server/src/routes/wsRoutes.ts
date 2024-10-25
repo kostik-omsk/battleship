@@ -3,7 +3,7 @@ import { WebSocket } from "ws";
 import { safeParseJSON } from "@/utils/messageParser";
 import { handleRegistration } from "@/controllers/regController";
 import { BaseMessage, MessageType } from "@/types/index.d";
-import { handleCreateRoom } from "@/controllers/roomController";
+import { handleAddUserToRoom, handleCreateRoom } from "@/controllers/roomController";
 
 export function wsRoutes(ws: WebSocket, message: string) {
   const parsedMessage = safeParseJSON<BaseMessage>(message);
@@ -21,6 +21,9 @@ export function wsRoutes(ws: WebSocket, message: string) {
       break;
     case MessageType.CreateRoom:
       handleCreateRoom(ws);
+      break;
+    case MessageType.AddUserToRoom:
+      handleAddUserToRoom(ws, data);
       break;
     default:
       console.log("Unknown message type:", type);
