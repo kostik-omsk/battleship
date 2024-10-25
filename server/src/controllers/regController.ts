@@ -3,6 +3,7 @@ import { safeParseJSON } from "@/utils/messageParser";
 import { updateRoom } from "@/controllers/roomController";
 import { updateWinners } from "@/controllers/gameController";
 import sendMessage from "@/utils/sendMessage";
+import { addConnection } from "@/services/WebSocketService";
 
 interface PlayersDB {
   [name: string]: Player;
@@ -35,6 +36,7 @@ export const handleRegistration = (ws: ExtendedWebSocket, data: string) => {
       };
 
       ws.player = player;
+      addConnection(ws, player);
 
       const response = {
         ...player,
@@ -63,6 +65,7 @@ export const handleRegistration = (ws: ExtendedWebSocket, data: string) => {
       };
 
       ws.player = player;
+      addConnection(ws, player);
 
       const response = {
         ...player,

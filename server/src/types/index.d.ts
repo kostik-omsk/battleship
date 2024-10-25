@@ -20,6 +20,11 @@ export interface Player {
   wins: number;
 }
 
+export interface PlayerWS {
+  name: string;
+  index: string | number;
+}
+
 export interface BaseMessage {
   type: MessageType;
   data: string;
@@ -43,12 +48,17 @@ export interface RegCreateMessage {
 export interface User {
   password: string;
 }
+
+export interface Room {
+  indexRoom: number | string;
+}
+
 export interface RoomUser {
   name: string;
   index: number | string;
 }
 
-export interface UpdateRoomMessage {
+export interface UpdateRoom {
   roomId: number | string;
   roomUsers: RoomUser[];
 }
@@ -56,6 +66,13 @@ export interface UpdateRoomMessage {
 export interface UpdateWinners {
   name: string;
   wins: number;
+}
+
+// Создание игры
+
+export interface CreateGame {
+  idGame: number | string;
+  idPlayer: number | string;
 }
 
 export interface ExtendedWebSocket extends WebSocket {
