@@ -1,4 +1,4 @@
-import { Ship } from "@/types";
+import { ShipMessage } from "@/types";
 
 export default () =>
   [
@@ -62,4 +62,4 @@ export default () =>
       type: "small",
       length: 1,
     },
-  ] satisfies Ship[];
+  ] satisfies ShipMessage[];

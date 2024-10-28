@@ -97,6 +97,8 @@ const addShips = (ws: ExtendedWebSocket, data: string) => {
   if (Object.keys(gameSessions[gameId].playersShips).length === 2) {
     startGameSession(gameId);
   }
+
+  console.log(`Player ${getPlayerNameByIndex(+indexPlayer)} added ships`);
 };
 
 const startGameSession = (gameId: string | number) => {
@@ -123,6 +125,8 @@ const startGameSession = (gameId: string | number) => {
   });
 
   sendTurnInfo([players[player1Index], players[player2Index]], player1Index);
+
+  console.log(`Game ${gameId} started`);
 };
 
 function initializeShips(ships: Ship[]) {
@@ -158,7 +162,6 @@ const attack = (ws: ExtendedWebSocket, data: string, isRandomAttack = false) => 
   const { gameId, indexPlayer } = parsedData;
   let { x, y } = parsedData;
   if (turnPlayers.currentPlayer !== indexPlayer) {
-    console.log("the other player's move");
     return;
   }
   const gameSession = gameSessions[gameId];
@@ -208,6 +211,8 @@ const attack = (ws: ExtendedWebSocket, data: string, isRandomAttack = false) => 
 
   sendMessage<AttackFeedback>(ws, MessageType.Attack, feedbackData);
   sendMessage<AttackFeedback>(gameSession.players[opponentIndex], MessageType.Attack, feedbackData);
+
+  console.log(`Player ${getPlayerNameByIndex(indexPlayer)} attacked x: ${x}, y: ${y}, status: ${attackStatus}`);
 };
 
 const endGame = (
@@ -234,6 +239,8 @@ const endGame = (
   if (gameId) {
     delete gameSessions[gameId];
   }
+
+  console.log(`Game ${gameId} ended, winner: ${name}`);
 };
 
 function hit(

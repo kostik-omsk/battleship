@@ -91,6 +91,16 @@ export interface Ship {
   positions: { x: number; y: number }[];
 }
 
+export interface ShipMessage {
+  position: {
+    x: number;
+    y: number;
+  };
+  direction: boolean;
+  length: number;
+  type: "small" | "medium" | "large" | "huge";
+}
+
 export interface AddShips {
   gameId: number | string;
   ships: Ship[];

@@ -35,6 +35,7 @@ export const handSinglePlay = (ws: ExtendedWebSocket) => {
     });
     addShips(wsBot, addShipsBot);
   });
+  console.log("Bot connected");
 };
 
 export function botTurn(ws: ExtendedWebSocket, message: string) {

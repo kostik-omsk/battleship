@@ -22,12 +22,15 @@ export const handleCreateRoom = (ws: ExtendedWebSocket) => {
     index: ws.player.index,
   };
 
-  rooms.push({
+  const room = {
     roomId: randomUUID(),
     roomUsers: [user],
-  });
+  };
+  rooms.push(room);
 
   updateRoom();
+
+  console.log(`Player ${user.name} created room ${room.roomId}`);
 };
 
 export const handleAddUserToRoom = (ws: ExtendedWebSocket, data: string) => {
@@ -69,26 +72,14 @@ export const handleAddUserToRoom = (ws: ExtendedWebSocket, data: string) => {
   } else {
     console.log("Room not found");
   }
+
+  console.log(`Player ${ws.player?.name} added to room ${indexRoom}`);
 };
 
-// Функция для обработки отключения игрока
 export const handleExit = (ws: ExtendedWebSocket) => {
   if (!ws.player) return;
 
-  // const playerIndex = ws.player.index;
-  // const roomIndex = rooms.findIndex((room) => room.roomUsers.some((user) => user.index === playerIndex));
-
-  // if (roomIndex !== -1) {
-  //   const room = rooms[roomIndex];
-  //   const remainingUser = room.roomUsers[0];
-  //   const remainingUserWs = getConnections(remainingUser);
-  //   endGame(remainingUserWs, ws, Number(remainingUser), null);
-  //   rooms.splice(roomIndex, 1);
-  // }
-  // updateRoom();
-
   if (gameSessions) {
-    // Проверка на отключение в процессе игры
     for (const gameId in gameSessions) {
       const gameSession = gameSessions[gameId];
       const playerInGame = Object.keys(gameSession.players).find((key) => gameSession.players[key] === ws);
@@ -96,7 +87,6 @@ export const handleExit = (ws: ExtendedWebSocket) => {
       if (playerInGame !== undefined) {
         const opponentIndex = Object.keys(gameSession.players).find((key) => key !== playerInGame);
 
-        // Завершаем игру, объявляя оставшегося игрока победителем, если есть оппонент
         if (opponentIndex && gameSession.players[opponentIndex]) {
           const opponentWs = gameSession.players[opponentIndex];
           endGame(opponentWs, ws, Number(opponentIndex), gameId);
