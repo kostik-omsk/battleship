@@ -15,3 +15,5 @@ export const removeConnection = (ws: ExtendedWebSocket, player: PlayerWS) => {
 };
 
 export const getConnections = (player: PlayerWS) => wsConnections[player.index];
+
+export const getAllConnections = () => Object.values(wsConnections);

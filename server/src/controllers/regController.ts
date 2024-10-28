@@ -44,8 +44,9 @@ export const handleRegistration = (ws: ExtendedWebSocket, data: string) => {
         errorText: "",
       };
       sendMessage<RegCreateMessage>(ws, MessageType.Reg, response);
-      updateRoom(ws);
-      updateWinners(ws);
+      updateRoom();
+      updateWinners();
+      console.log(`Player logged in as ${player.name} with index ${player.index}`);
     } else if (existingPlayer) {
       const response = {
         name,
@@ -56,7 +57,7 @@ export const handleRegistration = (ws: ExtendedWebSocket, data: string) => {
       sendMessage<RegCreateMessage>(ws, MessageType.Reg, response);
     } else {
       const playerId = Object.keys(playersDB).length + 1;
-      playersDB[name] = { index: playerId, wins: 0 };
+      playersDB[name] = { name: name, index: playerId, wins: 0 };
       usersDB[name] = { password };
 
       const player = {
@@ -74,8 +75,19 @@ export const handleRegistration = (ws: ExtendedWebSocket, data: string) => {
       };
 
       sendMessage<RegCreateMessage>(ws, MessageType.Reg, response);
-      updateRoom(ws);
-      updateWinners(ws);
+      updateRoom();
+      updateWinners();
+      console.log(`Player registered as ${player.name} with index ${player.index}`);
     }
   }
+};
+
+export const getPlayerNameByIndex = (index: number): string | null => {
+  for (const playerName in playersDB) {
+    const player = playersDB[playerName];
+    if (player.index === index) {
+      return player.name;
+    }
+  }
+  return null; // Если игрок с таким индексом не найден
 };
