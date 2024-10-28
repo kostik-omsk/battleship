@@ -4,6 +4,7 @@ import { safeParseJSON } from "@/utils/messageParser";
 import { handleRegistration } from "@/controllers/regController";
 import { BaseMessage, MessageType } from "@/types/index.d";
 import { handleAddUserToRoom, handleCreateRoom } from "@/controllers/roomController";
+import { addShips, attack } from "@/controllers/gameController";
 
 export function wsRoutes(ws: WebSocket, message: string) {
   const parsedMessage = safeParseJSON<BaseMessage>(message);
@@ -24,6 +25,16 @@ export function wsRoutes(ws: WebSocket, message: string) {
       break;
     case MessageType.AddUserToRoom:
       handleAddUserToRoom(ws, data);
+      break;
+    case MessageType.AddShips:
+      addShips(ws, data);
+      break;
+    case MessageType.Attack:
+      attack(ws, data);
+      break;
+    case MessageType.RandomAttack:
+      attack(ws, data, true);
+
       break;
     default:
       console.log("Unknown message type:", type);
