@@ -8,7 +8,8 @@ import { getAllConnections } from "@/services/WebSocketService";
 export const rooms: UpdateRoom[] = [];
 
 export const updateRoom = () => {
-  const connections = getAllConnections(); // Получаем все активные соединения
+  const connections = getAllConnections();
+
   connections.forEach((ws) => {
     sendMessage<UpdateRoom[]>(ws, MessageType.UpdateRoom, rooms);
   });

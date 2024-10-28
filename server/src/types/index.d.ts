@@ -4,6 +4,7 @@ export enum MessageType {
   Reg = "reg",
   UpdateWinners = "update_winners",
   CreateRoom = "create_room",
+  Single = "single_play",
   AddUserToRoom = "add_user_to_room",
   CreateGame = "create_game",
   UpdateRoom = "update_room",

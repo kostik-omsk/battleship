@@ -5,6 +5,7 @@ import { handleRegistration } from "@/controllers/regController";
 import { BaseMessage, MessageType } from "@/types/index.d";
 import { handleAddUserToRoom, handleCreateRoom } from "@/controllers/roomController";
 import { addShips, attack } from "@/controllers/gameController";
+import { botTurn, handSinglePlay } from "@/controllers/single_play/singlePlay";
 
 export function wsRoutes(ws: WebSocket, message: string) {
   const parsedMessage = safeParseJSON<BaseMessage>(message);
@@ -20,6 +21,9 @@ export function wsRoutes(ws: WebSocket, message: string) {
     case MessageType.Reg:
       handleRegistration(ws, data);
       break;
+    case MessageType.Single:
+      handSinglePlay(ws);
+      break;
     case MessageType.CreateRoom:
       handleCreateRoom(ws);
       break;
@@ -34,9 +38,12 @@ export function wsRoutes(ws: WebSocket, message: string) {
       break;
     case MessageType.RandomAttack:
       attack(ws, data, true);
-
       break;
+    case MessageType.Turn:
+      botTurn(ws, data);
+      break;
+
     default:
-      console.log("Unknown message type:", type);
+      break;
   }
 }

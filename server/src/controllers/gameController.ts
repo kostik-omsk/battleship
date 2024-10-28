@@ -16,11 +16,10 @@ import {
 } from "@/types/index.d";
 import { safeParseJSON } from "@/utils/messageParser";
 import sendMessage from "@/utils/sendMessage";
-import { randomUUID } from "crypto";
 import { getPlayerNameByIndex } from "./regController";
 import { updateRoom } from "./roomController";
 
-interface GameSession {
+export interface GameSession {
   playersShips: {
     [playerIndex: number | string]: AddShips["ships"];
   };
@@ -30,6 +29,7 @@ interface GameSession {
   attackedCells: {
     [playerIndex: string | number]: Set<string>;
   };
+  idGame: string | number;
 }
 
 interface GameSessions {
@@ -65,7 +65,7 @@ const createGameForPlayers = (room: UpdateRoom) => {
   const [player1, player2] = room.roomUsers;
   const player1Ws = getConnections(player1);
   const player2Ws = getConnections(player2);
-  const gameId = randomUUID();
+  const gameId = room.roomId;
 
   createGame(player1Ws, gameId);
   createGame(player2Ws, gameId);
@@ -88,7 +88,7 @@ const addShips = (ws: ExtendedWebSocket, data: string) => {
   if (!gameId || !ships || indexPlayer === undefined) return console.log("Invalid data");
 
   if (!gameSessions[gameId]) {
-    gameSessions[gameId] = { playersShips: {}, players: {}, attackedCells: {} };
+    gameSessions[gameId] = { playersShips: {}, players: {}, attackedCells: {}, idGame: gameId };
   }
 
   gameSessions[gameId].playersShips[indexPlayer] = ships;
