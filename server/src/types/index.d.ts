@@ -16,6 +16,7 @@ export enum MessageType {
 }
 
 export interface Player {
+  name: string;
   index: number | string;
   wins: number;
 }
@@ -75,6 +76,64 @@ export interface CreateGame {
   idPlayer: number | string;
 }
 
+export interface Ship {
+  position: {
+    x: number;
+    y: number;
+  };
+  direction: boolean;
+  length: number;
+  type: "small" | "medium" | "large" | "huge";
+  // Новые поля
+  hits: { x: number; y: number }[];
+  isSunk: boolean;
+  positions: { x: number; y: number }[];
+}
+
+export interface AddShips {
+  gameId: number | string;
+  ships: Ship[];
+  indexPlayer: number | string;
+}
+
+export interface StartGame {
+  ships: {
+    position: {
+      x: number;
+      y: number;
+    };
+    direction: boolean;
+    length: number;
+    type: "small" | "medium" | "large" | "huge";
+  }[];
+  currentPlayerIndex: number | string;
+}
+
+export interface TurnMessage {
+  currentPlayer: number;
+}
+
+export interface AttackMessage {
+  gameId: number | string;
+  x: number;
+  y: number;
+  indexPlayer: number | string;
+}
+
+export type AttackStatus = "miss" | "killed" | "shot";
+
+export interface AttackFeedback {
+  position: {
+    x: number;
+    y: number;
+  };
+  currentPlayer: number | string;
+  status: AttackStatus;
+}
+
+export interface FinishGame {
+  winPlayer: number | string;
+}
 export interface ExtendedWebSocket extends WebSocket {
   player?: RoomUser;
 }
