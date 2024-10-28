@@ -1,12 +1,13 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { wsRoutes } from "./routes/wsRoutes";
+import { handleExit } from "./controllers/roomController";
 
 const PORT = 3000;
 const wss = new WebSocketServer({ port: PORT });
 
 wss.on("connection", (ws: WebSocket) => {
   console.log("New client connected");
-  console.log(`- Max clients: ${wss.clients.size}`);
+  console.log(`- Number of active clients: ${wss.clients.size}`);
 
   ws.on("message", (message: string) => {
     wsRoutes(ws, message);
@@ -18,6 +19,7 @@ wss.on("connection", (ws: WebSocket) => {
 
   ws.on("close", () => {
     console.log("Client disconnected");
+    handleExit(ws);
   });
 });
 
